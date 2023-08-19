@@ -14,40 +14,30 @@
             <b-modal id="modal-prevent-closing" ref="modal" title="Submit Your Name" @show="resetModal" @hidden="resetModal"
                 @ok="handleOk">
                 <form ref="form" @submit.stop.prevent="handleSubmit">
-                    <b-form-group label="Nombre" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="nombre" v-model="cursoEdit.nombre" :state="nameState" required></b-form-input>
+                    <b-form-group label="Nombre" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="nombre" v-model="cursoEdit.nombre" required></b-form-input>
                     </b-form-group>
-                    <b-form-group label="Url de la imagen" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="img" v-model="cursoEdit.img" :state="nameState" required></b-form-input>
+                    <b-form-group label="Url de la imagen" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="img" v-model="cursoEdit.img" required></b-form-input>
                     </b-form-group>
-                    <b-form-group label="cupos del curso" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="cupos" v-model="cursoEdit.cupos" :state="nameState" required></b-form-input>
+                    <b-form-group label="cupos del curso" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="cupos" v-model="cursoEdit.cupos" required></b-form-input>
                     </b-form-group>
-                    <b-form-group label="inscritos del curso" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="inscritos" v-model="cursoEdit.inscritos" :state="nameState"
+                    <b-form-group label="inscritos del curso" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="inscritos" v-model="cursoEdit.inscritos" required></b-form-input>
+                    </b-form-group>
+                    <b-form-group label="Duracion del Curso" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="duracion" v-model="cursoEdit.duracion" required></b-form-input>
+                    </b-form-group>
+                    <b-form-group label="Fecha de registro" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="nafecha_registrome-input" v-model="cursoEdit.fecha_registro"
                             required></b-form-input>
                     </b-form-group>
-                    <b-form-group label="Duracion del Curso" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="duracion" v-model="cursoEdit.duracion" :state="nameState" required></b-form-input>
+                    <b-form-group label="Terminado" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="completado" v-model="cursoEdit.completado" required></b-form-input>
                     </b-form-group>
-                    <b-form-group label="Fecha de registro" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="nafecha_registrome-input" v-model="cursoEdit.fecha_registro" :state="nameState"
-                            required></b-form-input>
-                    </b-form-group>
-                    <b-form-group label="Terminado" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="completado" v-model="cursoEdit.completado" :state="nameState"
-                            required></b-form-input>
-                    </b-form-group>
-                    <b-form-group label="Costo del Curso" label-for="name-input" invalid-feedback="Name is required"
-                        :state="nameState">
-                        <b-form-input id="costo" v-model="cursoEdit.costo" :state="nameState" required></b-form-input>
+                    <b-form-group label="Costo del Curso" label-for="name-input" invalid-feedback="Name is required">
+                        <b-form-input id="costo" v-model="cursoEdit.costo" required></b-form-input>
                     </b-form-group>
                     <b-form-textarea id="textarea-small" v-model="cursoEdit.descripcion" size="sm"
                         placeholder="Comentario de actualizacion"></b-form-textarea>
@@ -77,12 +67,26 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+
+import { mapState, mapGetters, mapActions } from 'vuex';
 export default {
     name: 'administracion-com',
     data: function () {
         return {
-            cursoEdit: {},
+            cursoEdit: {
+                "id": '',
+                "img": '',
+                "nombre": '',
+                "costo": '',
+                "duracion": '',
+                "cupos": '',
+                "inscritos": '',
+                "completado": '',
+                "fecha_registro": '',
+                "descripcion": '',
+
+            },
+            
             fields: [
                 { key: 'nombre', label: 'Curso' },
                 { key: 'cupos', label: 'Cupos' },
@@ -104,7 +108,7 @@ export default {
             //     "fecha_registro": "06/03/2022",
             //     "descripcion": "Curso con las nuevas actualizaciones de JavaScript."
             //   }
-        }
+        };
     },
     computed: {
         ...mapState(['cursos']),
@@ -113,33 +117,48 @@ export default {
         ...mapGetters(['cursosTerminados']),
         ...mapGetters(['totalCursos']),
         cuposRestantes() {
-            return this.alumnosPermitidos - this.alumnosInscritos
+            return this.alumnosPermitidos - this.alumnosInscritos;
         },
         cursosActivos() {
-            return this.totalCursos - this.cursosTerminados
+            return this.totalCursos - this.cursosTerminados;
         },
     },
-
-
-
     created() {
-
     },
-
     methods: {
+        ...mapActions(['addCurso']),
         deletecurso(id) {
-            console.log(id)
-            this.cursos.splice(id, 1)
+            console.log(id);
+            this.cursos.splice(id, 1);
         },
-
         editarcurso(item) {
-            console.log(item)
-            this.cursoEdit = item
+            console.log(item);
+            this.cursoEdit = item;
         },
+        handleOk() {
+            let curso =  {
+                "img": this.cursoEdit,
+                "nombre": this.cursoEdit.nombre,
+                "costo": this.cursoEdit.costo,
+                "duracion": this.cursoEdit.duracion,
+                "cupos": this.cursoEdit.cupos,
+                "inscritos": this.cursoEdit.inscritos,
+                "completado": this.cursoEdit.completado,
+                "fecha_registro": this.cursoEdit.fecha_registro,
+                "descripcion": this.cursoEdit.descripcion,
+            }
+            this.addCurso(curso)
+
+        },
+        resetModal() {
+
+
+
+        }
+
         // agregarcurso() {
         //     this.cursos.push()
         // },
-
     },
 }
 </script>

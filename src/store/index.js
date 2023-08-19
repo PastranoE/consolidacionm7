@@ -99,8 +99,21 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    ADD_CURSOS(state,Curso){
+      Curso.id = Math.floor(Math.random()*1000)
+      state.cursos.push(Curso)
+    },
+    EDIT_CURSOS(state,ecurso){
+console.log (ecurso)
+    }
   },
   actions: {
+    addCurso:({commit},Curso)=>{
+      commit('ADD_CURSOS',Curso)
+    },
+    editcurso:({commit},ecurso)=>{
+      commit ( 'EDIT_CURSOS',ecurso)
+    }
   },
   modules: {
   }
